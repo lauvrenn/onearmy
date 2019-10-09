@@ -6,6 +6,7 @@ import theme from 'src/themes/styled.theme'
 import { Button } from 'src/components/Button'
 import Text from 'src/components/Text'
 import { Link } from 'src/components/Links'
+import { RouteComponentProps, withRouter } from 'react-router'
 
 const Label = styled.label`
  font-size: ${theme.fontSizes[2] + 'px'}
@@ -13,8 +14,51 @@ const Label = styled.label`
  display: block;
 `
 
-export class SignUpMessagePage extends React.Component {
+interface IFormValues {
+  email: string
+}
+interface IState {
+  formValues: IFormValues
+  errorMsg?: string
+  disabled?: boolean
+}
+interface IProps extends RouteComponentProps<any> {
+  onChange?: (e: React.FormEvent<any>) => void
+  preloadValues?: any
+}
+
+class SignUpMessagePage extends React.Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props)
+    this.state = {
+      formValues: {
+        email: '',
+      },
+    }
+  }
+
+  sendSignUpEmail(email: string) {
+    try {
+    } catch (error) {
+      this.setState({ errorMsg: error.message, disabled: false })
+    }
+  }
+
+  getUrlParams(): URLSearchParams {
+    if (!this.props.location.search) {
+      return new URLSearchParams()
+    }
+    return new URLSearchParams(this.props.location.search)
+  }
+
   public render() {
+    const params = this.getUrlParams()
+    const email = params.get('email') || ''
+    this.sendSignUpEmail(email)
+    // const nextValues = { ...this.state.formValues }
+    // nextValues.email = email
+    // this.setState({formValues: nextValues})
+    // console.log(this.state)
     return (
       <Flex
         bg="inherit"
@@ -44,15 +88,15 @@ export class SignUpMessagePage extends React.Component {
             flexDirection="column"
           >
             <Heading small py={4} width={1}>
-              Sign up successful
+              Sign-up successful
             </Heading>
             <Flex flexDirection={'column'} mb={3}>
               <Text>
-                We sent you an email with all the details to complete your
-                profile.
+                We sent an email to <b>{email}</b> with all the details to
+                complete your profile.
               </Text>
               <Text small color={'grey'} mt={2}>
-                Didn't receive the email? <Link to="#">Resend</Link>.
+                Didn't receive the email? <Link to="#">Resend</Link>
               </Text>
             </Flex>
           </Flex>
@@ -68,3 +112,5 @@ export class SignUpMessagePage extends React.Component {
     )
   }
 }
+
+export default withRouter(SignUpMessagePage)

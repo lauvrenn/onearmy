@@ -63,7 +63,7 @@ class SignUpPage extends React.Component<IProps, IState> {
     try {
       if (await this.checkUserNameUnique(userName)) {
         await this.props.userStore!.registerNewUser(email, password, userName)
-        this.props.history.push('/sign-up-message')
+        this.props.history.push(`/sign-up-message?email=${email}`)
       } else {
         this.setState({
           errorMsg: 'That username is already taken',
